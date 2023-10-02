@@ -1,0 +1,286 @@
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Scanner;
+
+public class coba {
+    private static HashMap<String, String> userPasswords = new HashMap<>();
+    private static HashMap<String, Double> database = new HashMap<>();
+    private static HashMap<String, List<String>> transactionHistory = new HashMap<>();
+    private static HashMap<String, Double> tuitionFees = new HashMap<>();
+    private static HashMap<String, Double> topUpTokens = new HashMap<>();
+    private static String adminPassword = "admin"; // Kata sandi admin
+    private static String currentUser = null;
+    private static Scanner input = new Scanner(System.in);
+
+    public static void main(String[] args) {
+        boolean isRunning = true;
+        while (isRunning) {
+            // Tampilkan menu utama jika belum ada pengguna yang login
+            if (currentUser == null) {
+                System.out.println("Selamat datang di Dompet unindra");
+                System.out.println("1. Registrasi");
+                System.out.println("2. Login");
+                System.out.println("3. Keluar");
+                System.out.print("Pilih opsi (1/2/3): ");
+                int choice = input.nextInt();
+                input.nextLine(); // Membersihkan newline
+
+                switch (choice) {
+                case 1:
+                    register();
+                    break;
+                case 2:
+                    login();
+                    break;
+                case 3:
+                    isRunning = false;
+                    break;
+                default:
+                    System.out.println("Opsi tidak valid. Silakan coba lagi.");
+                }
+            } else {
+                // Tampilkan menu pengguna setelah login
+                System.out.println("Selamat datang, " + currentUser + "!");
+                System.out.println("1. Transfer Uang");
+                System.out.println("2. Isi Saldo");
+                System.out.println("3. Bayar Kuliah");
+                System.out.println("4. Info Saldo dan Histori Transaksi");
+                System.out.println("5. Kirim Broadcast (Admin)");
+                System.out.println("6. Buat Token Top-Up (Admin)");
+                System.out.println("7. Notifikasi");
+                System.out.println("8. Keluar");
+                System.out.print("Pilih opsi (1/2/3/4/5/6/7/8): ");
+                int choice = input.nextInt();
+                input.nextLine(); // Membersihkan newline
+
+                switch (choice) {
+                case 1:
+                    transferUang();
+                    break;
+                case 2:
+                    isiSaldo();
+                    break;
+                case 3:
+                    bayarKuliah();
+                    break;
+                case 4:
+                    infoSaldo();
+                    break;
+                case 5:
+                    if (currentUser.equals("admin")) {
+                        kirimBroadcast();
+                    } else {
+                        System.out.println("Anda tidak memiliki izin untuk mengakses fitur ini.");
+                    }
+                    break;
+                case 6:
+                    if (currentUser.equals("admin")) {
+                        buatTokenTopUp();
+                    } else {
+                        System.out.println("Anda tidak memiliki izin untuk mengakses fitur ini.");
+                    }
+                    break;
+                case 7:
+                    lihatBroadcast();
+                    break;
+                case 8:
+                    currentUser = null; // Logout
+                    break;
+                default:
+                    System.out.println("Opsi tidak valid. Silakan coba lagi.");
+                }
+            }
+        }
+        System.out.println("Terima kasih telah menggunakan Dompet unindra!");
+    }
+
+     private static void register() {
+        System.out.print("Masukkan nama pengguna: ");
+        String username = input.nextLine();
+        if (userPasswords.containsKey(username)) {
+            System.out.println("Pengguna dengan nama ini sudah terdaftar.");
+        } else {
+            System.out.print("Masukkan password: ");
+            String password = input.nextLine();
+            userPasswords.put(username, password);
+            database.put(username, 0.0); // Saldo awal diatur ke 0
+            System.out.println("Registrasi berhasil.");
+        }
+    }
+
+    private static void login() {
+        System.out.print("Masukkan nama pengguna: ");
+        String username = input.nextLine();
+        if (userPasswords.containsKey(username)) {
+            System.out.print("Masukkan password: ");
+            String password = input.nextLine();
+            if (password.equals(userPasswords.get(username))) {
+                currentUser = username;
+                System.out.println("Login berhasil.");
+            } else {
+                System.out.println("Password salah. Silakan coba lagi.");
+            }
+        } else {
+            System.out.println("Nama pengguna tidak ditemukan.");
+        }
+    }
+
+    private static void transferUang() {
+        System.out.print("Masukkan nama pengguna tujuan: ");
+        String recipient = input.nextLine();
+        if (database.containsKey(recipient)) {
+            System.out.print("Masukkan jumlah uang yang akan ditransfer: ");
+            double amount = input.nextDouble();
+            if (amount > 0 && database.get(currentUser) >= amount) {
+                database.put(currentUser, database.get(currentUser) - amount);
+                database.put(recipient, database.get(recipient) + amount);
+                // Menambahkan informasi transaksi ke histori transaksi pengirim
+                String senderTransaction = "Transfer ke " + recipient + ": -" + amount;
+                if (!transactionHistory.containsKey(currentUser)) {
+                    transactionHistory.put(currentUser, new ArrayList<>());
+                }
+                transactionHistory.get(currentUser).add(senderTransaction);
+                // Menambahkan informasi transaksi ke histori transaksi penerima
+                String recipientTransaction = "Transfer dari " + currentUser + ": +" + amount;
+                if (!transactionHistory.containsKey(recipient)) {
+                    transactionHistory.put(recipient, new ArrayList<>());
+                }
+                transactionHistory.get(recipient).add(recipientTransaction);
+                System.out.println("Transfer berhasil.");
+            } else {
+                System.out.println("Jumlah uang tidak valid atau saldo tidak mencukupi.");
+            }
+        } else {
+            System.out.println("Pengguna tujuan tidak ditemukan.");
+        }
+    }
+
+   private static void isiSaldo() {
+    if (topUpTokens.isEmpty()) {
+        System.out.println("Tidak ada token top-up yang tersedia saat ini.");
+        return;
+    }
+    System.out.print("Masukkan kode token top-up: ");
+    String tokenCode = input.nextLine();
+    if (topUpTokens.containsKey(tokenCode)) {
+        double tokenValue = topUpTokens.get(tokenCode);
+        double currentBalance = database.get(currentUser);
+        database.put(currentUser, currentBalance + tokenValue);
+        // Menambahkan informasi transaksi isi saldo ke histori transaksi
+        String transaction = "Isi Saldo dengan Token: +" + tokenValue;
+        if (!transactionHistory.containsKey(currentUser)) {
+            transactionHistory.put(currentUser, new ArrayList<>());
+        }
+        transactionHistory.get(currentUser).add(transaction);
+        // Menghapus token yang telah digunakan dari daftar topUpTokens
+        topUpTokens.remove(tokenCode);
+
+        System.out.println("Isi saldo berhasil. Saldo Anda sekarang: " + database.get(currentUser));
+    } else {
+        System.out.println("Token tidak valid atau sudah digunakan.");
+    }
+    }
+
+
+   private static void bayarKuliah() {
+    if (currentUser != null) {
+        double tuitionFee = 1800000.0; // Tagihan awal kuliah sebesar 1.8 juta
+        double totalOutstanding = tuitionFees.getOrDefault(currentUser, tuitionFee);
+        double currentBalance = database.get(currentUser);
+
+        System.out.println("Tagihan Kuliah:");
+        System.out.println("Total Tagihan: " + totalOutstanding);
+        System.out.println("Saldo Anda saat ini: " + currentBalance);
+
+        if (totalOutstanding > 0) {
+            System.out.print("Masukkan jumlah yang ingin dibayar (atau 0 untuk keluar): ");
+            double payment = input.nextDouble();
+
+            if (payment >= 0 && payment <= totalOutstanding && payment <= currentBalance) {
+                totalOutstanding -= payment;
+                tuitionFees.put(currentUser, totalOutstanding);
+
+                currentBalance -= payment;
+                database.put(currentUser, currentBalance);
+
+                // Menambahkan informasi transaksi bayar kuliah ke histori transaksi
+                String transaction = "Pembayaran Kuliah: -" + payment;
+                transactionHistory.computeIfAbsent(currentUser, k -> new ArrayList<>()).add(transaction);
+
+                System.out.println("Pembayaran berhasil. Sisa tagihan: " + totalOutstanding);
+
+                // Jika tagihan telah dilunasi, hapus tagihan dari daftar tunggakan
+                if (totalOutstanding <= 0) {
+                    tuitionFees.remove(currentUser);
+                    System.out.println("Tagihan kuliah telah dilunasi.");
+                }
+            } else if (payment > currentBalance) {
+                System.out.println("Saldo tidak mencukupi.");
+            } else {
+                System.out.println("Jumlah pembayaran tidak valid atau melebihi tagihan.");
+            }
+        } else {
+            System.out.println("Anda tidak memiliki tagihan kuliah saat ini.");
+        }
+    } else {
+        System.out.println("Anda harus login untuk membayar kuliah.");
+    }
+}
+
+
+
+
+    private static void infoSaldo() {
+        double saldo = database.get(currentUser);
+        System.out.println("Saldo Anda saat ini: " + saldo);
+        // Menampilkan histori transaksi pengguna
+        if (transactionHistory.containsKey(currentUser)) {
+            System.out.println("Histori Transaksi Anda:");
+            for (String transaction : transactionHistory.get(currentUser)) {
+                System.out.println(transaction);
+            }
+        } else {
+            System.out.println("Histori transaksi Anda kosong.");
+        }
+    }
+
+    private static void kirimBroadcast()  {
+     System.out.print("Masukkan pesan broadcast: ");
+     String message = input.nextLine();
+
+    // Mengirim pesan broadcast kepada semua pengguna
+     for (String user : userPasswords.keySet()) {
+        // Menambahkan pesan broadcast ke histori transaksi pengguna
+        String transaction = "Broadcast Pesan: " + message;
+        transactionHistory.computeIfAbsent(user, k -> new ArrayList<>()).add(transaction);
+     }
+     System.out.println("Pesan broadcast berhasil dikirim.");
+     }
+
+
+    private static void buatTokenTopUp() {
+        Scanner scanner = new Scanner(System.in);
+        System.out.print("Masukkan jumlah nilai token top-up: ");
+        double tokenValue = scanner.nextDouble();
+        scanner.nextLine(); // Membersihkan newline
+
+        System.out.print("Masukkan kode token (unik): ");
+        String tokenCode = scanner.nextLine();
+
+        topUpTokens.put(tokenCode, tokenValue);
+        System.out.println("Token top-up berhasil dibuat: " + tokenCode);
+     }
+    
+    private static void lihatBroadcast() {
+    if (currentUser != null && transactionHistory.containsKey(currentUser)) {
+        System.out.println("Pesan Broadcast untuk " + currentUser + ":");
+        for (String transaction : transactionHistory.get(currentUser)) {
+            System.out.println(transaction);
+        }
+    } else {
+        System.out.println("Tidak ada pesan broadcast .");
+    }
+    }
+
+}
