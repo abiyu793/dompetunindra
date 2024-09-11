@@ -3,7 +3,7 @@ aplikasi dompet dengan java
 * menyalah abangku
 
 
-bangkit kegiatan
+## bangkit kegiatan
 
 week 1 
 clear 3 
