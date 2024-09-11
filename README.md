@@ -4,6 +4,8 @@ aplikasi dompet dengan java
 
 
 #bangkit
+kegiatan
+
 ###week 1 
 clear 3 
 Memulai Dasar Pemrograman untuk Menjadi Pengembang Software
