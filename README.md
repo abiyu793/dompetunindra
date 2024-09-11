@@ -5,7 +5,7 @@ aplikasi dompet dengan java
 
 ## bangkit kegiatan
 
-week 1 
+**week 1** <Br>
 clear 3 
 * Memulai Dasar Pemrograman untuk Menjadi Pengembang Software
 * Pengenalan ke Logika Pemrograman (Programming Logic 101)
