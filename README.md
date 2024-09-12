@@ -1,6 +1,7 @@
 # Dompet Unindra
 aplikasi dompet dengan java
 * menyalah abangku
+*  Abiyu Sofyan, [Linkedin](https://www.linkedin.com/in/abiyu-sofyan-696b54222/).
 
 
 ## bangkit kegiatan
