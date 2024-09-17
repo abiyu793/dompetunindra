@@ -13,3 +13,7 @@ clear 3
 * Belajar Dasar Git dengan GitHub
 
 * Memulai Pemrograman dengan Kotlin (0%)
+
+**week 3**<Br>
+clear 1
+* Memulai Pemrograman dengan Kotlin
