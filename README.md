@@ -14,6 +14,7 @@ clear 3
 
 * Memulai Pemrograman dengan Kotlin (0%)
 
-**week 3**<Br>
+**week 2**<Br>
 clear 1
 * Memulai Pemrograman dengan Kotlin
+* basic android (20%)
