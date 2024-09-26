@@ -4,7 +4,8 @@ aplikasi dompet dengan java
 *  Abiyu Sofyan, [Linkedin](https://www.linkedin.com/in/abiyu-sofyan-696b54222/).
 
 
-## bangkit kegiatan
+# bangkit kegiatan<Br>
+## Bulan 1
 
 **week 1** <Br>
 clear 3 
@@ -20,5 +21,6 @@ clear 1
 * Belajar Membuat Aplikasi Android untuk Pemula (20%)
 
 **week 3**<Br>
+clear 1
 * Belajar Membuat Aplikasi Android untuk Pemula
 * Belajar Fundamental Aplikasi Android (10%)
