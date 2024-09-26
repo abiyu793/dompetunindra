@@ -17,4 +17,8 @@ clear 3
 **week 2**<Br>
 clear 1
 * Memulai Pemrograman dengan Kotlin
-* basic android (20%)
+* Belajar Membuat Aplikasi Android untuk Pemula (20%)
+
+**week 3**<Br>
+* Belajar Membuat Aplikasi Android untuk Pemula
+* Belajar Fundamental Aplikasi Android (10%)
